@@ -20,14 +20,15 @@ def exit_handler():
     sys.settrace(None)
 
 if __name__ == "__main__":
-    #Register exit handler that is called before the application exits
-    atexit.register (exit_handler)
-    #Set the start time of application
-    start_time = time.time ()
-    #Set the trace function
-    sys.settrace(trace_function)
-    
     #Read the first argument
     assert len(sys.argv) >= 2, "Provide the python program to profile. Usage example: python -m snake-prof test.py"
     with open(sys.argv[1], 'rb') as fp:
-        exec (fp.read ())
+        #Compile code
+        code = compile (fp.read (), sys.argv[1], "exec")
+        #Register exit handler that is called before the application exits    
+        atexit.register (exit_handler)
+        #Set the start time
+        start_time = time.time ()
+        #Set the trace function
+        sys.settrace(trace_function)
+        exec (code)
